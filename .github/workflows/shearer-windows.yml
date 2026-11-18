@@ -2,6 +2,8 @@ name: Shearer Technical Windows x64
 
 on:
   workflow_dispatch:
+  push:
+    branches: [codex/shearer-install-fix]
 
 permissions:
   contents: read
@@ -334,7 +336,8 @@ jobs:
             app = 'Shearer Technical'
             version = $env:VERSION
             commit = $env:GITHUB_SHA
-            server = 'support.shearertech.com'
+            internal_app_name = 'ShearerTechnical'
+            server = 'shearertech.duckdns.org'
             public_key = 'aCGU1H16gIx8BTQRhku0XK6C6JjlHYoNUXmvDP8BP3Y='
             signed = $false
           } | ConvertTo-Json
@@ -345,6 +348,26 @@ jobs:
             Get-FileHash -Algorithm SHA256 |
             ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" } |
             Set-Content ./SignOutput/SHA256SUMS.txt
+
+      - name: Verify packaged client installs
+        shell: pwsh
+        timeout-minutes: 5
+        run: |
+          $package = (Get-Item ./SignOutput/shearer-technical-$env:VERSION-windows-x64.exe).FullName
+          Start-Process -FilePath $package -ArgumentList '--silent-install','printer=0' -Wait
+          $installed = Join-Path $env:ProgramFiles 'ShearerTechnical/ShearerTechnical.exe'
+          if (!(Test-Path -LiteralPath $installed)) { throw 'Packaged client did not install' }
+          $service = Get-Service -Name ShearerTechnical -ErrorAction Stop
+          $service.WaitForStatus('Running', [TimeSpan]::FromSeconds(30))
+          if ((& $installed --version | Out-String).Trim() -ne $env:VERSION) { throw 'Installed version mismatch' }
+          foreach ($setting in @{
+            'custom-rendezvous-server' = 'shearertech.duckdns.org'
+            'key' = 'aCGU1H16gIx8BTQRhku0XK6C6JjlHYoNUXmvDP8BP3Y='
+          }.GetEnumerator()) {
+            if ((& $installed --option $setting.Key | Out-String).Trim() -ne $setting.Value) {
+              throw "Installed setting mismatch: $($setting.Key)"
+            }
+          }
 
       - name: Upload Windows x64 client
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
