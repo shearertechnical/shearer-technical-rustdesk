@@ -354,10 +354,16 @@ jobs:
         timeout-minutes: 5
         run: |
           $package = (Get-Item ./SignOutput/shearer-technical-$env:VERSION-windows-x64.exe).FullName
-          Start-Process -FilePath $package -ArgumentList '--silent-install','printer=0' -Wait
+          Start-Process -FilePath $package -ArgumentList '--silent-install','printer=0'
+          $deadline = (Get-Date).AddSeconds(90)
+          do {
+            $service = Get-Service -Name ShearerTechnical -ErrorAction SilentlyContinue
+            if ($service) { break }
+            Start-Sleep -Seconds 2
+          } while ((Get-Date) -lt $deadline)
+          if (!$service) { throw 'Packaged client did not create its service' }
           $installed = Join-Path $env:ProgramFiles 'ShearerTechnical/ShearerTechnical.exe'
           if (!(Test-Path -LiteralPath $installed)) { throw 'Packaged client did not install' }
-          $service = Get-Service -Name ShearerTechnical -ErrorAction Stop
           $service.WaitForStatus('Running', [TimeSpan]::FromSeconds(30))
           if ((& $installed --version | Out-String).Trim() -ne $env:VERSION) { throw 'Installed version mismatch' }
           foreach ($setting in @{
