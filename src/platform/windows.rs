@@ -1521,9 +1521,11 @@ pub fn copy_raw_cmd(src_raw: &str, _raw: &str, _path: &str) -> ResultType<String
 
 pub fn copy_exe_cmd(src_exe: &str, exe: &str, path: &str) -> ResultType<String> {
     let main_exe = copy_raw_cmd(src_exe, exe, path)?;
+    let rename_exe = rename_exe_cmd(src_exe, path)?;
     Ok(format!(
         "
         {main_exe}
+        {rename_exe}
         copy /Y \"{ORIGIN_PROCESS_EXE}\" \"{path}\\{broker_exe}\"
         ",
         ORIGIN_PROCESS_EXE = win_topmost_window::ORIGIN_PROCESS_EXE,
@@ -5047,3 +5049,4 @@ ProcessId=10136
         assert_eq!(pids.len(), 0);
     }
 }
+
