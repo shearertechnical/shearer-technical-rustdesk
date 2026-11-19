@@ -2517,12 +2517,16 @@ pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
 
 pub fn load_custom_client() {
     // Built-in configuration for the Shearer Technical distribution.
-    *config::APP_NAME.write().unwrap() = "Shearer Technical".to_owned();
+    *config::APP_NAME.write().unwrap() = "Shearer-Technical".to_owned();
     {
         let mut settings = config::OVERWRITE_SETTINGS.write().unwrap();
         settings.insert(
             "custom-rendezvous-server".to_owned(),
-            "support.shearertech.com".to_owned(),
+            "shearertech.duckdns.org".to_owned(),
+        );
+        settings.insert(
+            "relay-server".to_owned(),
+            "shearertech.duckdns.org".to_owned(),
         );
         settings.insert(
             "key".to_owned(),
@@ -3670,3 +3674,4 @@ mod tests {
         assert_eq!(decode_id_pk(&signed, &pk).unwrap(), (id, their_pk));
     }
 }
+
