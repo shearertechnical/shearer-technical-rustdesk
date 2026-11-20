@@ -334,7 +334,7 @@ jobs:
             app = 'Shearer Technical'
             version = $env:VERSION
             commit = $env:GITHUB_SHA
-            server = 'support.shearertech.com'
+            server = 'shearertech.duckdns.org'
             public_key = 'aCGU1H16gIx8BTQRhku0XK6C6JjlHYoNUXmvDP8BP3Y='
             signed = $false
           } | ConvertTo-Json
