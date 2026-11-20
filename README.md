@@ -8,6 +8,18 @@
   <b>We need your help to translate this README, <a href="https://github.com/rustdesk/rustdesk/tree/master/src/lang">RustDesk UI</a> and <a href="https://github.com/rustdesk/doc.rustdesk.com">RustDesk Doc</a> to your native language</b>
 </p>
 
+## Shearer Technical Remote Support
+
+Shearer Technical Remote Support is a self-hosted remote-support client based on
+[RustDesk](https://github.com/rustdesk/rustdesk). It is intended for authorized
+support sessions between a customer and Shearer Technical staff. The complete
+source code, branding changes, and Windows build workflow are available in this
+repository under the [GNU Affero General Public License v3.0](LICENCE).
+
+- [Releases and downloads](https://github.com/shearertechnical/shearer-technical-rustdesk/releases)
+- [Privacy notice](docs/PRIVACY.md)
+- [Code signing policy](docs/CODE_SIGNING_POLICY.md)
+
 > [!Caution]
 > **Misuse Disclaimer:** <br>
 > The developers of RustDesk do not condone or support any unethical or illegal use of this software. Misuse, such as unauthorized access, control or invasion of privacy, is strictly against our guidelines. The authors are not responsible for any misuse of the application.
